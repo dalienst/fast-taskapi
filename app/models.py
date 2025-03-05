@@ -4,9 +4,15 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 
-# Task Model
-class Task(BaseModel):
-    id: str = str(uuid.uuid4())
+class TaskCreate(BaseModel):
+
     title: str
     description: Optional[str] = None
     completed: bool = False
+
+
+class TaskResponse(TaskCreate):
+    id: str = str(uuid.uuid4())
+
+    class Config:
+        from_attributes = True
