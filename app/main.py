@@ -52,14 +52,19 @@ async def get_task(task_id: str, db: Session = Depends(get_db)):
 
 
 # Update task
-@app.put("/task/{task_id}", response_model=TaskResponse)
-async def update_task(task_id: str, task: TaskCreate, db: Session = Depends(get_db)):
+@app.patch("/task/{task_id}", response_model=TaskResponse)
+async def update_task(
+    task_id: str, task_data: TaskCreate, db: Session = Depends(get_db)
+):
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    task.title = task.title
-    task.description = task.description
-    task.completed = task.completed
+
+    # Update task attributes with new data
+    task.title = task_data.title
+    task.description = task_data.description
+    task.completed = task_data.completed
+
     db.commit()
     db.refresh(task)
     return task
